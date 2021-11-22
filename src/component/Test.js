@@ -20,9 +20,14 @@ let inc;
 let strinc;
 let prevarray=[]
 const [repo,setRepo]=useState([])
+//console.log(seloption)
+
 let [seloption,setSeloption]=useState('null')
-let modifyseloption=seloption
+console.log(seloption)
+
 let [checkoption,setCheckoption]=useState([])
+
+
 
 
  intnumber=parseInt(qnumber)
@@ -48,9 +53,8 @@ const getRepo=()=>{
 
 let len
  useEffect(() => {
-  let notes=localStorage.getItem('repo')
-let myLeads=JSON.parse(notes)
-
+//   let notes=localStorage.getItem('repo')
+// let myLeads=JSON.parse(notes)
  getRepo()    
     }, [])
     let notes=localStorage.getItem('repo')
@@ -94,60 +98,50 @@ myLeads.answer.splice(index1,1)
 
   localStorage.setItem('repo',JSON.stringify(myLeads))
     navigate("/test/"+id+"/"+strinc)
+    // window.location.reload(false)
 }
+let countquestions=0
 
 
 function next(){
+
   intnumber=parseInt(qnumber)
   inc=1+intnumber
   strinc=inc.toString()
-let updateradiooption
-  console.log(modifyseloption)
   //console.log(displayprev)
   //localStorage('abc',JSON.stringify(radiovalue))
 let temp_value
 
 
-
-   /* for(let indexvalueofquestion=0;indexvalueofquestion<strinc;indexvalueofquestion++){
-          if(indexvalueofquestion == (strinc-1)){
-            if(type == 'Multiple-Response'){
-              myLeads.prevState[indexvalueofquestion]=checkoption
-              myLeads.prevState.push(myLeads.prevState[indexvalueofquestion])
-              console.log(myLeads.prevState)
-            }else{
-              myLeads.prevState[indexvalueofquestion]=seloption
-              temp1=myLeads.prevState[indexvalueofquestion]
-              console.log(myLeads.prevState)
-
-            }
-            
-          }
-    }   */
-
-  // if(myLeads.prevState[indexofquestion] != 'null'){
-  //   temp1=myLeads.prevState
-  // }
+//console.log(seloption)
 
 
   if(type == 'Multiple-Response'){
             let tempvar=parseInt(strinc)
            for(let i=0;i<=tempvar;i++){
-           // console.log(indexvalueofquestion)
-            if(indexvalueofquestion == (tempvar-i)){
+              if(checkoption[i] == ''){
+                myLeads.prevState[indexvalueofquestion]= myLeads.prevState[indexvalueofquestion]
+              }
+            else if(indexvalueofquestion == (tempvar-i)){
               myLeads.prevState[indexvalueofquestion]=checkoption
-              temp1=myLeads.prevState[indexvalueofquestion]
-                }
+              }
+                
           }
          }else if(type == 'Radio'){
            let tempvar=parseInt(strinc)
             for(let i=0;i<=tempvar;i++){
             if(indexvalueofquestion == (tempvar-i)){
-              myLeads.prevState[indexvalueofquestion]=modifyseloption
-              console.log(myLeads.prevState)
+              console.log(seloption)
+              if(seloption == ""){
+              myLeads.prevState[indexvalueofquestion]= myLeads.prevState[indexvalueofquestion]
+              seloption=myLeads.prevState[indexvalueofquestion]
+                }else{
+              myLeads.prevState[indexvalueofquestion]=seloption
+              }
              // temp1=myLeads.prevState[indexvalueofquestion]
+              }
             }
-          } 
+            
         
       }
    //console.log(myLeads.prevState)
@@ -160,19 +154,32 @@ let temp_value
     //console.log(correctoptionlength)
 
     for(let i=0;i<correctoptionlength;i++){
+      if((checkoption.length)>(repo[index].questions[qnumber].correctOptionIndex.length)){
+        temp_value='wrong'
+      }else{
     if(repo[index].questions[qnumber].correctOptionIndex[i] == checkoption[i]){
-      temp_value='correct'
-    }else{
-     temp_value='wrong'
+      countquestions=countquestions+1
     }
+      }
   }
-  myLeads.answer.push(temp_value)
+    // console.log(repo[index].questions[qnumber].correctOptionIndex.length)
+    // console.log(countquestions)
+      if(countquestions == repo[index].questions[qnumber].correctOptionIndex.length){
+          temp_value='correct'
+          myLeads.answer.push(temp_value)
+      }else{
+        temp_value='wrong'
+        myLeads.answer.push(temp_value)
+      }
+  
   }
   else{
    
   if(repo[index].questions[qnumber].correctOptionIndex != seloption){
+    console.log(seloption)
           myLeads.answer.push('wrong')
       }else{
+        
 myLeads.answer.push('correct')
  }
 
@@ -181,7 +188,13 @@ myLeads.answer.push('correct')
 localStorage.setItem('repo',JSON.stringify(myLeads))
 navigate("/test/"+id+"/"+strinc)
 
+console.log(seloption)
+setSeloption('')
+console.log(seloption)
+//console.log(seloption)
+//window.location.reload(false)
 }
+
 
 
 let temp=[]
@@ -212,11 +225,42 @@ setCheckoption(tempcheck)
   
 
 function finish(){
+
+  if(type == 'Multiple-Response'){
+    let tempvar=parseInt(strinc)
+   for(let i=0;i<=tempvar;i++){
+   // console.log(indexvalueofquestion)
+    if(indexvalueofquestion == (tempvar-i)){
+      myLeads.prevState[indexvalueofquestion]=checkoption
+      }
+        
+  }
+ }else if(type == 'Radio'){
+   let tempvar=parseInt(strinc)
+    for(let i=0;i<=tempvar;i++){
+    if(indexvalueofquestion == (tempvar-i)){
+      console.log(seloption)
+      if(seloption == ""){
+      myLeads.prevState[indexvalueofquestion]= myLeads.prevState[indexvalueofquestion]
+      seloption=myLeads.prevState[indexvalueofquestion]
+        }else{
+      myLeads.prevState[indexvalueofquestion]=seloption
+      }
+     // temp1=myLeads.prevState[indexvalueofquestion]
+      }
+    }
+    
+
+}
+//console.log(myLeads.prevState)
+localStorage.setItem('repo',JSON.stringify(myLeads.prevState))
+
+
   if((repo[index].questions[qnumber].correctOptionIndex) == seloption){
-  
+    myLeads.prevState[qnumber]=seloption
      myLeads.answer.push('correct')
   }else{
-  
+    myLeads.prevState[qnumber]=seloption
 myLeads.answer.push('wrong')
   }
   localStorage.setItem('repo',JSON.stringify(myLeads))
@@ -226,9 +270,8 @@ myLeads.answer.push('wrong')
 }
 prevarray=myLeads.prevState
 {displayprev=myLeads.questions.indexOf(myLeads.questions[qnumber])}
-
-
-    return (
+console.log(seloption)
+return (
       <>
     
       <div class="row">
@@ -240,67 +283,65 @@ prevarray=myLeads.prevState
                   <div class="panel-body">
                   <form style={{textAlign:'left'}}> 
                             <label>{text1.questionText}</label>
-                            
                             {
                               
                             type === 'Multiple-Response' ?
                             <>
-                               {option1.map((note,index)=>(
-                                typeof prevarray[displayprev] == 'undefined'?
-                               <>
-                            <div class="checkbox">
-                              { myLeads.prevState[indexvalueofquestion] }
-                                 <input  onChange={clickableCheckbox} ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
-                            </div>
-                            </>
-                            :
-                                 prevarray[displayprev] == myLeads[displayprev]?
+                            {
+                            typeof prevarray[displayprev] == 'undefined'?
                             <>
+                               {option1.map((note,index)=>
+                             
                             <div class="checkbox">
-                            {myLeads.prevState[displayprev]}
-                               <input  onChange={clickableCheckbox} defaultChecked={true} ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
-                          </div>
-                          </>
-                          :
-                              <>
-                            <div class="checkbox">
-                            {myLeads.prevState[indexvalueofquestion] }
-                               <input  onChange={clickableCheckbox}  ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
-                          </div>
-                          </>
-
-                                ))
-                               }
-                               </>
+                             
+                                 <input  onChange={clickableCheckbox} defaultChecked={false} ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
+                            </div>
+                            )}</>
+                                  :
+                                <>
+                               
+                                 { option1.map((note,index) =>(
+                                  (((myLeads.prevState[qnumber]).includes(index.toString())) == true)
+                                    ?<>
+                                      <div class="checkbox">
+                                    
+                              <div style={{display:"none"}}>{ myLeads.prevState[qnumber]}</div>
+                                 <input  onChange={clickableCheckbox} defaultChecked={true} ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
+                            </div></>
+                                    :<> <div class="checkbox">
+                                       <input  onChange={clickableCheckbox} ref={textValue1}  key={note.id} type="checkbox" name="option" value={index} /> {option1[index]}
+                                  </div></>
+                                   ))
+                                  }
+                                </>
+                                
+                               }</>
                               :
                               <>
-                       
-                              {/* { {displayprev=repo[index].questions[indexvalueofquestion]} } */}
-                              
-                            {option1.map((note,index)=>(
-                              
-                              typeof prevarray[displayprev] == 'undefined' ?(
-                                <>
-                              <div class="radio">
-                                {/* {console.log('abcd')} */}
-                                
-                                  <input onChange={clickableRadio}  ref={textValue1} key={note.id} type="radio" name="option" value={index} style={{backgroundColor:'blue'}}/> {option1[index]}
-                              </div>
-                                </>
-                              )
-                            :
-                               
-                              parseInt(prevarray[displayprev]) === index ?
-                                      <>
-                                       <div style={{display:'none'}}>{seloption = myLeads.prevState[indexvalueofquestion]}</div>
+                                  {
+                                    typeof prevarray[displayprev]== 'undefined' ?
+                                    <>
+                                      {option1.map((note,index)=>(
+                                          <div class="radio">
+                                          {/* {console.log('abcd')} */}
+                                            <input onChange={clickableRadio}   ref={textValue1} key={note.id} type="radio" name="option" value={index} style={{backgroundColor:'blue'}}/> {option1[index]}
+                                        </div>
+                                      ))}
+                                    </>
+                                    :
+                                    <>
+                                    
+                                    {option1.map((note,index)=>(
+                                       ((prevarray[displayprev]) === index.toString()) ?
+                                       <>
+                                       <div style={{display:'none'}}>{ myLeads.prevState[indexvalueofquestion]}</div>
                                       <div class="radio">
                                       {/* {prevarray[index]+"radioc"} */}
                                       <input onChange={clickableRadio} defaultChecked={true} ref={textValue1} key={note.id} type="radio" name="option" value={index} /> {option1[index]}
                                      
                                       </div> 
                                       </>
-                                    :
-                              
+                                      :
                                       <>
                                       <div class="radio">
                                       {/* {prevarray[index]+"radiouc"} */}
@@ -308,8 +349,10 @@ prevarray=myLeads.prevState
                                       <input onChange={clickableRadio} ref={textValue1} key={note.id} type="radio" name="option" value={index} /> {option1[index]}
                                       </div> 
                                       </>
-                            ))
-                       }
+                                       
+                                    ))}
+                                    </>
+                                  }
                             </>
                             }
        
@@ -318,20 +361,25 @@ prevarray=myLeads.prevState
                   <div class="panel-footer">
                       {(len) == (strinc)?
                       <>
-                       <a   class="btn btn-success" style={{textAlign:'left'}} onClick={previous} >Previous</a>
-                        <a style={{textAlign:'right'}} class=" btn btn-danger"   onClick={()=>finish()} >Finish</a>  
+                      <div style={{textAlign:'right'}}>
+                       <a   class="btn btn-success" onClick={previous} >Previous</a>
+                     
+                        <a class=" btn btn-danger"   onClick={()=>finish()} >Finish</a>  
+                        </div>
                         </>
                         : strinc >1 ?
                         <>
-                          <a   class="btn btn-success" style={{textAlign:'left'}} onClick={previous} >Previous</a>
-                       <a   class="btn btn-success" style={{textAlign:'left'}} onClick={next} >Next</a>
-                       
+                        <div style={{textAlign:'left'}}>
+                          <a   class="btn btn-success"  onClick={previous} >Previous</a>
+                       <a   class="btn btn-success" onClick={next} >Next</a>
+                       </div>   
                     
                         </>
                         :
                         <>
-                       
-                        <a   class="btn btn-success" style={{textAlign:'left'}} onClick={next} >Next</a>
+                       <div style={{textAlign:'left'}}>
+                        <a   class="btn btn-success" onClick={next} >Next</a>
+                        </div>
                         </>
                     }
                                          
